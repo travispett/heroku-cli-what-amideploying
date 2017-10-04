@@ -1,7 +1,7 @@
 {
   "name": "heroku-cli-what-amideploying",
   "description": "Heroku CLI plugin for diffing files and commits since last Heroku deploy.",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "author": {
     "name": "Travis Pett",
     "email": "travispett@gmail.com"
