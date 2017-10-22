@@ -6,6 +6,7 @@ This is a [Heroku CLI](https://github.com/heroku/cli) plugin for listing what fi
 
 ### Dependencies
 - git
+- [Heroku CLI](https://github.com/heroku/cli)
 
 This was built and tested with this release of the Heroku CLI:
 ```
@@ -15,7 +16,7 @@ heroku-cli/6.14.31-33a2d0a (darwin-x64) node-v8.5.0
 
 ### Install
 ```
-heroku plugins:install heroku-cli-what-amideploying
+$ heroku plugins:install heroku-cli-what-amideploying
 ```
 
 ### Run
@@ -27,26 +28,26 @@ heroku plugins:install heroku-cli-what-amideploying
 
 ##### Commands
 ```
-heroku what:amideploying -a your-heroku-app-name
+$ heroku what:amideploying -a your-heroku-app-name
 
 <List of files will be here>
 ```
 
 The command is also aliased so you can run either of the following:
 ```
-heroku deploying -a your-heroku-app-name
-heroku changed -a your-heroku-app-name
+$ heroku deploying -a your-heroku-app-name
+$ heroku changed -a your-heroku-app-name
 ```
 
 The command does a diff of the `HEAD` of the current branch and the commit hash of the last [release](https://devcenter.heroku.com/articles/releases) of the given app.
 
-It then outputs the changed files (the same as `git diff --name-only hash1 hash2`) and then checks to see if files have changed in either of the below detected folders.
+It then outputs the changed files (the same as `git diff --name-only HEAD hash_of_last_release`) and then checks to see if files have changed in either of the below detected folders.
 
 If files have changed, it outputs a message with which type of task (migrations or after_party).
 
 If migrations and post-deploy tasks are present the output of the command will look like this:
 ```
-heroku what:amideploying -a your-heroku-app-name
+$ heroku what:amideploying -a your-heroku-app-name
 
 <List of files will be here>
 
@@ -55,6 +56,8 @@ heroku what:amideploying -a your-heroku-app-name
 ```
 
 ### Supported Detection
+
+[Open an issue](https://github.com/travispett/heroku-cli-what-amideploying/issues/new) to request a new library/framework.
 
 ##### Migrations
 `**/*/db/migrate` - This should cover Rails apps.
@@ -65,3 +68,11 @@ heroku what:amideploying -a your-heroku-app-name
 ### Developing
 
 Check [Heroku's CLI Plugins guide](https://devcenter.heroku.com/articles/developing-cli-plugins) for more info.
+
+```
+$ git clone https://github.com/travispett/heroku-cli-what-amideploying.git
+$ cd heroku-cli-what-amideploying
+$ heroku plugins:link
+```
+
+The CLI will automatically rebuild the plugin each time you run it if changes have been made.
