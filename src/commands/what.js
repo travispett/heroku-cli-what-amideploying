@@ -8,19 +8,16 @@ export default class HelloWorld extends Command {
   static aliases = ['deploying', 'changed'];
   static description = 'List what files have changed since last deploy.';
   static flags = {
-    commits: flags.string({ char: 'c', description: 'List commits.' }),
+    commitMessages: flags.boolean({ char: 'c', description: 'List commit messages.' }),
     app: flags.app({ required: true, description: 'Name of the Heroku app.' })
   };
 
   async run() {
-    const appName = this.flags.app || process.env.HEROKU_APP;
-    const listCommits = this.flags.commits || false;
+    const app = this.flags.app || process.env.HEROKU_APP;
+    const listCommitMessages = this.flags.commitMessages || false;
 
-    if (listCommits) {
-      this.out.log('This feature is not supported yet.');
-    }
-
-    const releases = await this.heroku.get(`/apps/${appName}/releases`);
+    // TODO: Refactor releases interface into a class.
+    const releases = await this.heroku.get(`/apps/${app}/releases`);
     const releaseDescriptions = releases.reverse().map((release) => release.description);
 
     const deployHashRegex = /Deploy\s([a-z0-9]{8})/;
@@ -33,8 +30,12 @@ export default class HelloWorld extends Command {
       return this.out.error('Could not find previous release matching regex.', 0);
     }
 
-    let git = new Git(listCommits);
-    git.listFiles(lastDeployedCommit)
-      .then((response) => this.out.log(response));
+    let git = new Git(lastDeployedCommit);
+
+    const defaultCommands = [git.listFiles()];
+    const commands = listCommitMessages ? defaultCommands.concat(git.listCommitMessages()) : defaultCommands;
+
+    Promise.all(commands)
+      .then((responses) => this.out.log(responses.join('\n')));
   }
 }

@@ -24,13 +24,18 @@ $ heroku plugins:install heroku-cli-what-amideploying
 ##### Flags
 
 - `-a` - (REQUIRED) This is your Heroku app name passed the same as you would pass to other Heroku CLI commands.
-- `-c` - This is not yet implemented.
+- `-c` - Appends the commit messages since the last release.
 
 ##### Commands
 ```
 $ heroku what:amideploying -a your-heroku-app-name
 
 <List of files will be here>
+
+$ heroku what:amideploying -c -a your-heroku-app-name
+
+<List of files will be here>
+<List of commit messages will be here>
 ```
 
 The command is also aliased so you can run either of the following:
