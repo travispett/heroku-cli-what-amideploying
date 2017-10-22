@@ -4,13 +4,13 @@ const cp = require('child_process');
 const fs = require('fs');
 
 export default class Git {
-  constructor(commits) {
-    this.commits = commits;
+  constructor(lastDeployedCommit) {
+    this.lastDeployedCommit = lastDeployedCommit;
   }
 
-  listFiles(lastDeployedCommit) {
+  listFiles() {
     return new Promise((resolve, reject) => {
-      const gitArgs = ['diff', '--name-only', 'HEAD', lastDeployedCommit];
+      const gitArgs = ['diff', '--name-only', 'HEAD', this.lastDeployedCommit];
 
       cp.execFile('git', gitArgs, (err, stdout) => {
         if (err) {
@@ -24,7 +24,13 @@ export default class Git {
     });
   }
 
-  listCommits() {}
+  listCommitMessages() {
+    return new Promise((resolve, reject) => {
+      const gitArgs = ['--no-pager', 'log', '--pretty=format:"%s"', `${this.lastDeployedCommit}..HEAD`];
+
+      cp.execFile('git', gitArgs, (err, stdout) => err ? reject(err) : resolve(listCommitMessagesWithHeader(stdout)));
+    });
+  }
 
   checkMigrations(filesChanged) {
     return new Promise((resolve, reject) => {
@@ -45,4 +51,11 @@ export default class Git {
   afterPartyPresent(err, filesChanged) {
     return /tasks\/deployment\//.test(filesChanged) && !err ? '\n*** New after_party tasks ***' : '';
   }
+}
+
+function listCommitMessagesWithHeader(commitMessages) {
+  const commitMessagesHeader = '*** Commits:\n';
+  const splitMessages = commitMessages.split('"');
+  splitMessages.unshift(commitMessagesHeader);
+  return splitMessages.join('');
 }
