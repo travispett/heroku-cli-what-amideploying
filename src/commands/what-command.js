@@ -2,7 +2,7 @@
 import { Command, flags } from 'cli-engine-heroku';
 import Git from '../git';
 
-export default class HelloWorld extends Command {
+export default class WhatCommand extends Command {
   static topic = 'what';
   static command = 'amideploying';
   static aliases = ['deploying', 'changed'];
